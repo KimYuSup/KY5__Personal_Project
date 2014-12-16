@@ -6,28 +6,27 @@ using namespace std;
 
 
 struct DUTCH{
-	int pay_id_number;	//결제자
-	string name;
-	string m_phone;
-	//int pay_member[100];
-	//int pay_money[100];
+	int pay_id_number;	// 결제자 회원번호 인덱스
+	string name;		// 결제자 이름
+	string m_phone;		// 결제자 연락처			<<<< = 연락처 대신에 " 그룹 " 으로 해주는건 어떨지... 
 };
 
 struct DUTCH_DATA{
-	int pay_id_number;
-	string name;
-	//string m_phone;
-	int pay_member[100];
-	int pay_money[100];
+	//int pay_id_number;	// 결제자 회원번호 인덱스 [DUTCH 구조체와 동일]
+	//string name;		// 결제자 이름 [DUTCH 구조체와 동일]
+	double pay_money[100]; // 더치페이 금액을 저장할 배열
+	//string pay_money_data[100][1000000];		// 어디에서 무엇을 먹었는지 저장할 공간.... [맴버인덱스] [어디서무엇을먹었는지의데이터] 추후 넣을 기능.
 };
 //회원추가					<<< = 추가 시에 data 파일에 결제자 회원번호(인덱스 번호)와 이름, 그리고 [  __MEMBER_Su__  ]명분의 초기화된"0" 배열을 추가해줘야한다 생각함.
 int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수. 
 {
-	DUTCH ph[100];
+	//==========================================================================	ㄱ		회원정보를 가져오기위한 init부분,
+	cout << "서버로부터 더치페이 기존회원의 정보를 가져오는 중 입니다..." <<endl;
+
 	int no;
 	bool u_no[100] = {false};
-	char s_sw, d_sw, c_sw;
 
+	DUTCH ph[100];
 	ifstream fin;
 	fin.open("DUTCHPay_member.txt");
 	fin >> no;
@@ -40,11 +39,24 @@ int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수.
 	}
 	fin.close();
 
-	//for(int i=0; i<100; i++)
-	//	ph[i].pay_id_number = -1;
+	DUTCH_DATA ph_data[100];
+	ifstream fin_data;
+	fin_data.open("DUTCHPay_data.txt");
+	fin_data >> no;
+	while(fin_data){
+		u_no[no] = true;
+		ph[no].pay_id_number = no;
+		fin_data >> ph[no].name;
+		for(int i=0; i!=100; i++)
+			fin_data >> ph_data[no].pay_money[i];
+		fin_data >> no;
+	}
+	fin_data.close();
+	cout << "서버로부터 더치페이 기존회원의 정보를 받아왔습니다." <<endl<<endl;
+	//===============================================================================================================	ㄱ 
 
+	char s_sw, d_sw, c_sw;
 	cout << "  * 회원등록 모드입니다. *\n\n";
-
 	while(1){
 		cout << " 신규등록하시겠습니까(Y/N) ? ";
 		cin >> c_sw;
@@ -67,30 +79,44 @@ int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수.
 		cout << " 연 락 처 : ";
 		cin >> ph[no].m_phone;
 
+
 		cout << " 저장하시겠습니까(Y/N) ? ";
 		cin >> s_sw;
 		if(s_sw == 'Y'||s_sw == 'y')
 		{
 			ph[no].pay_id_number = no;
 
-			////////////////////////////////////////////////////// 추가 설정한 부분에 대해 저장.
+			////////////////////////////////////////////////////// 추가로 입력한 정보를 저장.
 			ofstream fout;
 			fout.open("DUTCHPay_member.txt", ios::ios_base::app);
-			if(!fout)
-			{
-				cout <<"* 파일 오픈에 실패하였습니다."<<endl;
-			}
+			if(!fout) cout <<"* 파일 오픈에 실패하였습니다."<<endl; 
 			else
 			{
-				//for(int i=0; i<100; i++){
 				int i = no;
 				if(ph[i].pay_id_number < 0) continue;
 				fout << ph[i].pay_id_number << ' ';
 				fout << ph[i].name <<' ';
 				fout << ph[i].m_phone <<' '<<endl;
-				//}
 			}
 			fout.close();
+
+
+			ofstream fout_data;
+			fout_data.open("DUTCHPay_data.txt", ios::ios_base::app);
+			if(!fout_data) cout <<"* 파일 오픈에 실패하였습니다."<<endl; 
+			else
+			{
+				int i = no;
+				if(ph[i].pay_id_number < 0) continue;
+				fout_data << ph[i].pay_id_number << ' ';
+				fout_data << ph[i].name <<' ';
+				for(int ii=0; ii!=10; ii++)									//  <<  10명의 데이터라고했는데 그렇게가 아니라 100 명으로 설정할것.
+					ph_data[i].pay_money[ii]=0;
+				for(int ii=0; ii!=10; ii++)		
+					fout_data << ph_data[i].pay_money[ii]<<' ';
+				fout_data <<' '<<endl;
+			}
+			fout_data.close();
 			cout << "저장에성공했습니다."<<endl;
 			system("pause");
 			//////////////////////////////////////////////////////
@@ -332,25 +358,68 @@ int main()	// [   int DUTCH_pay_mode()   ]  더치페이 실질적인 기능 구현중...
 	cout << "서버로부터 더치페이 금액정보를 가져오는 중 입니다..." <<endl;
 
 	DUTCH_DATA ph_data[100];
-	/*int no;
-	bool u_no[100] = {false};
-
-	ifstream fin;
-	fin.open("DUTCHPay_data.txt");
-	fin >> no;
-	while(fin){
+	ifstream fin_data;
+	fin_data.open("DUTCHPay_data.txt");
+	fin_data >> no;
+	while(fin_data){
 		u_no[no] = true;
 		ph[no].pay_id_number = no;
-		fin >> ph[no].name;			// 결제자가 누구인지 알아야 하는데 이 정보는 [ DUTCH ] 회원정보 클레스 에서 받아와야할지 생각해봐야됨.
-		fin >> ph[no].m_phone;		// 이부분에 [ __MEMBER_Su__ ]에 해당하는 배열을 가지고 있어야 회원 정보에 누가 누구한테 돈을 줄 지 알 수 있음.
-		fin >> no;
+		fin_data >> ph[no].name;		// 결제자가 누구인지 알아야 하는데 이 정보는 [ DUTCH ] 회원정보 클레스 에서 받아와야할지 생각해봐야됨.
+		for(int i=0; i!=100; i++)
+			fin_data >> ph_data[no].pay_money[i];	// 이부분에 [ __MEMBER_Su__ ]에 해당하는 배열을 가지고 있어야 회원 정보에 누가 누구한테 돈을 줄 지 알 수 있음.
+		fin_data >> no;
 	}
-	fin.close();*/
-	cout << "더치페이 금액정보를 받아왔습니다." <<endl;
+	fin.close();
+	cout << "더치페이 금액정보를 받아왔습니다." <<endl<<endl;
 	//===============================================================================================================	ㄴ
 
+	int index_id;
+	cout << "결제자의 회원번호를 입력하세요 : " ;
+	cin >> index_id;
+
+	double money_all;
+	cout << "총 결제금액을 입력하세요 : " ;
+	cin >> money_all;
+
+	int member_count=1;
+	int member_id[ 10 ] = {0,};					//			<<<<  10의 데이터를 100명분의 데이터로 해줄것
+	while(1){
+		cout << "함께한 맴버의 회원번호를 입력하세요 (종료는 -1)   : " ;
+		cin >> member_id[member_count];
+		if(member_id[member_count] > 0) member_count++;	//    <<<<     3항 연산자로 수정할것.		( member_id[i] > 0 ) ? ( member_count++구문 ) : ( break구문 ) ;
+		else break;
+	}
+
+	double pay_money = (double)money_all / (double)member_count ;
+	for(int i=0; i!=10; i++)									//			<<<<  10의 데이터를 100명분의 데이터로 해줄것
+		ph_data[index_id].pay_money[member_id[i]] = money_all;
+
+	cout <<"\n\n결제자는 : [" << index_id << " ]번 ID [" <<  ph[index_id].name << "] 님 입니다." <<endl;
+	cout <<"총 결제금액은 ["<< money_all << "]원 이며" <<endl;
+	cout <<"총 맴버는 ["<< member_count << "]명 으로 " <<endl;
+	cout <<"더치페이의 가격은 각각 ["<< pay_money <<"]원 이 나왔으며"<<endl;
+	cout << "["<<ph[index_id].name << "]님 에게 ["<< pay_money << "]원을 추가로 주시면 됩니다."<<endl;
 
 
-
-
+	ph[no].pay_id_number = no;
+	ofstream fout_data;
+	fout_data.open("DUTCHPay_data.txt", ios::ios_base::app);
+	if(!fout_data) cout <<"* 파일 오픈에 실패하였습니다."<<endl; 
+	else
+	{
+		int i = no;
+		if(ph[i].pay_id_number < 0) return 0;
+		fout_data << ph[i].pay_id_number << ' ';
+		fout_data << ph[i].name <<' ';
+		for(int ii=0; ii!=10; ii++)									//  <<  10명의 데이터라고했는데 그렇게가 아니라 100 명으로 설정할것.
+		{	ph_data[i].pay_money[ii]=0;
+		ph_data[index_id].pay_money[member_id[i]] = money_all;}
+		for(int ii=0; ii!=10; ii++)		
+			fout_data << ph_data[i].pay_money[ii]<<' ';
+		fout_data <<' '<<endl;
+	}
+	fout_data.close();
+	cout << "저장에성공했습니다."<<endl;
+	system("pause");
+	return 0;
 }
