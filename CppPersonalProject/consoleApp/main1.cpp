@@ -2,15 +2,25 @@
 #include <fstream>
 #include <string>
 using namespace std;
+#define __MEMBER_Su__ 100	// 최대 멤버수, 메크로 상수로 최종버전에 설정할것. 처리시 주석문 지울것.
+
 
 struct DUTCH{
-	int pay_id_number;
+	int pay_id_number;	//결제자
 	string name;
 	string m_phone;
+	//int pay_member[100];
+	//int pay_money[100];
+};
+
+struct DUTCH_DATA{
+	int pay_id_number;
+	string name;
+	//string m_phone;
 	int pay_member[100];
 	int pay_money[100];
 };
-
+//회원추가					<<< = 추가 시에 data 파일에 결제자 회원번호(인덱스 번호)와 이름, 그리고 [  __MEMBER_Su__  ]명분의 초기화된"0" 배열을 추가해줘야한다 생각함.
 int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수. 
 {
 	DUTCH ph[100];
@@ -74,10 +84,10 @@ int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수.
 			{
 				//for(int i=0; i<100; i++){
 				int i = no;
-					if(ph[i].pay_id_number < 0) continue;
-					fout << ph[i].pay_id_number << ' ';
-					fout << ph[i].name <<' ';
-					fout << ph[i].m_phone <<' '<<endl;
+				if(ph[i].pay_id_number < 0) continue;
+				fout << ph[i].pay_id_number << ' ';
+				fout << ph[i].name <<' ';
+				fout << ph[i].m_phone <<' '<<endl;
 				//}
 			}
 			fout.close();
@@ -91,7 +101,7 @@ int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수.
 	system("cls");
 	return 0;
 }
-
+//회원검색
 int search_mode()	//회원 정보를 검색할 수 있는 함수
 {
 	DUTCH ph[100];
@@ -149,7 +159,7 @@ contine_A:
 	system("cls");
 	return 0;
 }
-
+//회원수정
 int change_mode()	//회원정보를 검색하여 기존의 정보를 수정하는 함수, 새로운 추가도 가능.
 {
 	DUTCH ph[100];
@@ -233,8 +243,8 @@ int change_mode()	//회원정보를 검색하여 기존의 정보를 수정하는 함수, 새로운 추가
 	system("cls");
 	return 0;
 }
-
-int main ()	// 메인 메뉴가 되는 main
+//main메뉴
+int main____ ()	// 메인 메뉴가 되는 main, //  최종적으로 실험시엔, main()으로 만들어줄것.
 {
 	int mode_sel=0;
 
@@ -281,7 +291,7 @@ int main ()	// 메인 메뉴가 되는 main
 			//DUTCH_pay_mode();
 			break;
 
-		default: system("cls"); cout << "잘못된 선택입니다." <<endl;
+		default: system("cls"); cout << " * 잘못된 선택입니다. *" <<endl;
 			break;
 		}
 	}
@@ -289,85 +299,58 @@ int main ()	// 메인 메뉴가 되는 main
 	cout << "\n프로그램이 비 정상적으로 종료됩니다." << endl; 
 	cout << "\nError Log를 추출하여 서버에 전송하겠습니다." << endl; 
 	//
-	// Error log save to send Code...(Add)
+	// Error log save to Send Server Code...(Add)
 	//
 	system("pause");
 	return 0;
-}
+} 
+//------------------------------------------------------------------------------------------------------------------------------ 구분선. (페이 기능 구현시 삭제)
 
-/*
-int main()
+int main()	// [   int DUTCH_pay_mode()   ]  더치페이 실질적인 기능 구현중...
 {
+	//==========================================================================	ㄱ		회원정보를 가져오기위한 init부분,
+	cout << "서버로부터 더치페이 회원의 정보를 가져오는 중 입니다..." <<endl;
 
-add_mode();
-DUTCH ph[100];
-bool u_no[100] = {false};
-int no, c_sw = 1;
-char ch_in[11];
-int count=0;
-int pay=0;
+	DUTCH ph[100];
+	int no;
+	bool u_no[100] = {false};
 
-int pay_1=0;	//결재자
-int pay_2=0;	//갤재금액
-int pay_3=0;	//맴버
-int m_cout=0;
+	ifstream fin;
+	fin.open("DUTCHPay_member.txt");
+	fin >> no;
+	while(fin){
+		u_no[no] = true;
+		ph[no].pay_id_number = no;
+		fin >> ph[no].name;
+		fin >> ph[no].m_phone;
+		fin >> no;
+	}
+	fin.close();
+	cout << "서버로부터 더치페이 회원의 정보를 받아왔습니다." <<endl<<endl;
+	//===============================================================================================================	ㄱ 
+	//==========================================================================	ㄴ		금액정보를 가져오기위한 init부분,
+	cout << "서버로부터 더치페이 금액정보를 가져오는 중 입니다..." <<endl;
+
+	DUTCH_DATA ph_data[100];
+	/*int no;
+	bool u_no[100] = {false};
+
+	ifstream fin;
+	fin.open("DUTCHPay_data.txt");
+	fin >> no;
+	while(fin){
+		u_no[no] = true;
+		ph[no].pay_id_number = no;
+		fin >> ph[no].name;			// 결제자가 누구인지 알아야 하는데 이 정보는 [ DUTCH ] 회원정보 클레스 에서 받아와야할지 생각해봐야됨.
+		fin >> ph[no].m_phone;		// 이부분에 [ __MEMBER_Su__ ]에 해당하는 배열을 가지고 있어야 회원 정보에 누가 누구한테 돈을 줄 지 알 수 있음.
+		fin >> no;
+	}
+	fin.close();*/
+	cout << "더치페이 금액정보를 받아왔습니다." <<endl;
+	//===============================================================================================================	ㄴ
 
 
-ifstream fin;
-fin.open("DUTCHPay_member.txt");
-fin >> no;
-while(fin){
-u_no[no] = true;
-ph[no].pay_id_number = no;
-fin >> ph[no].name;
-fin >> ph[no].m_phone;
-//fin >> ph[no].pay_member[no];
-//fin >> ph[no].pay_money[no];
-fin >> no;
+
+
+
 }
-fin.close();
-
-
-ifstream fin_pay;
-fin_pay.open("DUTCHPay_pay.txt");
-fin_pay >> no;
-while(fin){
-u_no[no] = true;
-ph[no].pay_id_number = no;
-fin_pay >> ph[no].pay_member[no];
-fin_pay >> ph[no].pay_money[no];
-fin_pay >> no;
-}
-fin_pay.close();
-
-cout << "  * 더치페이모드 입니다. *\n\n";
-
-cout << " 결재자의 회원번호를 입력하세요 : " ;
-cin >> pay_1;
-cout << " 결재금액을 입력하세요 : ";
-cin >> pay_2;
-while(pay_3>0)
-{
-cout << " 페이멤버 회원번호를 입력하세요 : ";
-cin >> pay_3;
-m_cout ++;
-}
-
-ofstream fout;
-fout.open("DUTCHPay_member.txt", ios::ios_base::app);
-for(int i=0; i<100; i++){
-if(u_no[i] == false) continue;
-ph[i].pay_id_number = i;
-// fout << setw(2) << ph[i].pay_id_number << ' ';
-fout << ph[i].pay_id_number << ' ';
-fout << ph[i].name <<' ';
-fout << ph[i].m_phone <<' ';
-for(int i=0; i<100; i++){
-fout << ph[i].pay_member[i] <<' ';
-fout << ph[i].pay_money[i] <<' ';
-}
-}
-fout.close();
-
-return 0;
-}*/
