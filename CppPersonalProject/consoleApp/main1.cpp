@@ -11,22 +11,34 @@ struct DUTCH{
 	int pay_money[100];
 };
 
-int add_mode()
+int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수. 
 {
 	DUTCH ph[100];
 	int no;
+	bool u_no[100] = {false};
 	char s_sw, d_sw, c_sw;
 
-	for(int i=0; i<100; i++)
-		ph[i].pay_id_number = -1;
+	ifstream fin;
+	fin.open("DUTCHPay_member.txt");
+	fin >> no;
+	while(fin){
+		u_no[no] = true;
+		ph[no].pay_id_number = no;
+		fin >> ph[no].name;
+		fin >> ph[no].m_phone;
+		fin >> no;
+	}
+	fin.close();
+
+	//for(int i=0; i<100; i++)
+	//	ph[i].pay_id_number = -1;
 
 	cout << "  * 회원등록 모드입니다. *\n\n";
 
 	while(1){
 		cout << " 신규등록하시겠습니까(Y/N) ? ";
 		cin >> c_sw;
-		if(c_sw == 'N' || c_sw == 'n') break;
-
+		if(c_sw == 'N' || c_sw == 'n')  break;
 		while(1){
 			cout << " 회원번호 : ";
 			cin >> no;
@@ -50,34 +62,37 @@ int add_mode()
 		if(s_sw == 'Y'||s_sw == 'y')
 		{
 			ph[no].pay_id_number = no;
-			cout << "저장에성공했습니다."<<endl;
-		}
-		//		else
-		//		{
-		//			cout << "올바른선택이 아닙니다."<<endl;
-		//		}
-	}
-	ofstream fout;
-	fout.open("DUTCHPay_member.txt", ios::ios_base::app);
-	if(!fout)
-	{
-		cout <<"* 파일 오픈에 실패하였습니다."<<endl;
-	}
-	else
-	{
-		for(int i=0; i<100; i++){
-			if(ph[i].pay_id_number < 0) continue;
-			fout << ph[i].pay_id_number << ' ';
-			fout << ph[i].name <<' ';
-			fout << ph[i].m_phone <<' '<<endl;
-		}
-	}
-	fout.close();
 
+			////////////////////////////////////////////////////// 추가 설정한 부분에 대해 저장.
+			ofstream fout;
+			fout.open("DUTCHPay_member.txt", ios::ios_base::app);
+			if(!fout)
+			{
+				cout <<"* 파일 오픈에 실패하였습니다."<<endl;
+			}
+			else
+			{
+				//for(int i=0; i<100; i++){
+				int i = no;
+					if(ph[i].pay_id_number < 0) continue;
+					fout << ph[i].pay_id_number << ' ';
+					fout << ph[i].name <<' ';
+					fout << ph[i].m_phone <<' '<<endl;
+				//}
+			}
+			fout.close();
+			cout << "저장에성공했습니다."<<endl;
+			system("pause");
+			//////////////////////////////////////////////////////
+		}
+		//else { cout << "올바른선택이 아닙니다."<<endl; }
+	}
+	// 최종저장이 아니라. 저장할지의 여부를 따라 위에서 저장하게 만듬
+	system("cls");
 	return 0;
 }
 
-int search_mode()
+int search_mode()	//회원 정보를 검색할 수 있는 함수
 {
 	DUTCH ph[100];
 	bool u_no[100] = {false};
@@ -121,21 +136,21 @@ int search_mode()
 			cout << " 휴 대 폰 : " << ph[no].m_phone << endl<< endl;
 			cout << " ==================================== " << endl;
 
-			contine_A:
+contine_A:
 			cout << "\n 검색을 원하시면 회원번호 또는 이름을 입력하세요 취소(-1) : ";
 			cin >> ch_in;
-			
+
 			if( atoi(ch_in) == -1 )
 			{
 				system("cls");
 				break;
 			}
 	}
-
+	system("cls");
 	return 0;
 }
 
-int change_mode()
+int change_mode()	//회원정보를 검색하여 기존의 정보를 수정하는 함수, 새로운 추가도 가능.
 {
 	DUTCH ph[100];
 	bool u_no[100] = {false};
@@ -215,15 +230,15 @@ int change_mode()
 		fout << ph[i].m_phone <<' ';
 	}
 	fout.close();
-
+	system("cls");
 	return 0;
 }
 
-int main ()
+int main ()	// 메인 메뉴가 되는 main
 {
 	int mode_sel=0;
-	
-		cout << "" <<endl;
+
+	cout << "" <<endl;
 	while(mode_sel>=0)
 	{
 		cout << "0. 종료" <<endl;
@@ -233,7 +248,7 @@ int main ()
 		cout << "4. 더치페이" <<endl;
 
 		if( cin>>mode_sel<=0 ) break;
-		
+
 		switch (mode_sel)
 		{
 		case 0:
@@ -284,75 +299,75 @@ int main ()
 int main()
 {
 
-	add_mode();
-	DUTCH ph[100];
-	bool u_no[100] = {false};
-	int no, c_sw = 1;
-	char ch_in[11];
-	int count=0;
-	int pay=0;
-	
-	int pay_1=0;	//결재자
-	int pay_2=0;	//갤재금액
-	int pay_3=0;	//맴버
-	int m_cout=0;
-	
-	
-	ifstream fin;
-	fin.open("DUTCHPay_member.txt");
-	fin >> no;
-	while(fin){
-		u_no[no] = true;
-		ph[no].pay_id_number = no;
-		fin >> ph[no].name;
-		fin >> ph[no].m_phone;
-		//fin >> ph[no].pay_member[no];
-		//fin >> ph[no].pay_money[no];
-		fin >> no;
-	}
-	fin.close();
+add_mode();
+DUTCH ph[100];
+bool u_no[100] = {false};
+int no, c_sw = 1;
+char ch_in[11];
+int count=0;
+int pay=0;
 
-	
-	ifstream fin_pay;
-	fin_pay.open("DUTCHPay_pay.txt");
-	fin_pay >> no;
-	while(fin){
-		u_no[no] = true;
-		ph[no].pay_id_number = no;
-		fin_pay >> ph[no].pay_member[no];
-		fin_pay >> ph[no].pay_money[no];
-		fin_pay >> no;
-	}
-	fin_pay.close();
+int pay_1=0;	//결재자
+int pay_2=0;	//갤재금액
+int pay_3=0;	//맴버
+int m_cout=0;
 
-	cout << "  * 더치페이모드 입니다. *\n\n";
 
-	cout << " 결재자의 회원번호를 입력하세요 : " ;
-	cin >> pay_1;
-	cout << " 결재금액을 입력하세요 : ";
-	cin >> pay_2;
-	while(pay_3>0)
-	{
-		cout << " 페이멤버 회원번호를 입력하세요 : ";
-		cin >> pay_3;
-		m_cout ++;
-	}
+ifstream fin;
+fin.open("DUTCHPay_member.txt");
+fin >> no;
+while(fin){
+u_no[no] = true;
+ph[no].pay_id_number = no;
+fin >> ph[no].name;
+fin >> ph[no].m_phone;
+//fin >> ph[no].pay_member[no];
+//fin >> ph[no].pay_money[no];
+fin >> no;
+}
+fin.close();
 
-	ofstream fout;
-	fout.open("DUTCHPay_member.txt", ios::ios_base::app);
-	for(int i=0; i<100; i++){
-		if(u_no[i] == false) continue;
-		ph[i].pay_id_number = i;
-		// fout << setw(2) << ph[i].pay_id_number << ' ';
-		fout << ph[i].pay_id_number << ' ';
-		fout << ph[i].name <<' ';
-		fout << ph[i].m_phone <<' ';
-		for(int i=0; i<100; i++){
-			fout << ph[i].pay_member[i] <<' ';
-			fout << ph[i].pay_money[i] <<' ';
-		}
-	}
-	fout.close();
 
-	return 0;
+ifstream fin_pay;
+fin_pay.open("DUTCHPay_pay.txt");
+fin_pay >> no;
+while(fin){
+u_no[no] = true;
+ph[no].pay_id_number = no;
+fin_pay >> ph[no].pay_member[no];
+fin_pay >> ph[no].pay_money[no];
+fin_pay >> no;
+}
+fin_pay.close();
+
+cout << "  * 더치페이모드 입니다. *\n\n";
+
+cout << " 결재자의 회원번호를 입력하세요 : " ;
+cin >> pay_1;
+cout << " 결재금액을 입력하세요 : ";
+cin >> pay_2;
+while(pay_3>0)
+{
+cout << " 페이멤버 회원번호를 입력하세요 : ";
+cin >> pay_3;
+m_cout ++;
+}
+
+ofstream fout;
+fout.open("DUTCHPay_member.txt", ios::ios_base::app);
+for(int i=0; i<100; i++){
+if(u_no[i] == false) continue;
+ph[i].pay_id_number = i;
+// fout << setw(2) << ph[i].pay_id_number << ' ';
+fout << ph[i].pay_id_number << ' ';
+fout << ph[i].name <<' ';
+fout << ph[i].m_phone <<' ';
+for(int i=0; i<100; i++){
+fout << ph[i].pay_member[i] <<' ';
+fout << ph[i].pay_money[i] <<' ';
+}
+}
+fout.close();
+
+return 0;
 }*/
