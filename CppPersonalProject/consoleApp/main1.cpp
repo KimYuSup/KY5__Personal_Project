@@ -1,14 +1,38 @@
+	
+	////////////////////////////////////////★	
+	//										//	
+	//		FTP NAS서버 접속 더치페이		//	
+	//										//	
+	//		ftp://ARTOAnas.ipdisk.co.kr		//	
+	//										//	2014.12.13 make...
+	//					20111974 김유섭		//////////////////////#	
+	//										//	
+	//////////////////////////////////////////	
+			//		
+			//		ver1.0	++	payAdd_mode 기능 추가			- 회원추가
+			//		ver1.1	++	Search_mode 기능 추가			- 회원검색
+			//		ver1.2	++	Change_mode 기능 추가			- 회원수정
+			//		ver1.3	++	DUTCH_pay_mode 기능 추가		- 페이기능
+			//		ver1.4	++	DUTCH__CLS_mode 기능 추가		- 페이정산
+			//		ver2.0	_&	각 함수별 알고리즘 정리			- 최적화 한참 많이 필요하다 생각듬. 
+			//		ver3.0	_+	ftp 접속 프로토콜 도입			- 파일 암호화를 통하여 데이터 암호필요성 느낌.
+			//		ver3.1	--	ftp 접속 프로토콜 수정			- 불 필요 부분 수정.
+			//		
+			//		ver4.0	$$	Win_API							- 진행중...#################
+			//		ver9.0	$$	Android_APP						- 구상중...
+			//		
+			//////////////////////////////////////////////#	
+	
 #include <iostream>
 #include <fstream>
 #include <string>
 using namespace std;
 #define __MEMBER_Su__ 100	// 최대 멤버수, 메크로 상수로 최종버전에 설정할것. 처리시 주석문 지울것.
 
-
 struct DUTCH{
 	int pay_id_number;	// 결제자 회원번호 인덱스
 	string name;		// 결제자 이름
-	string m_phone;		// 결제자 연락처			<<<< = 연락처 대신에 " 그룹 " 으로 해주는건 어떨지... 
+	string phone_num;	// 결제자 연락처			<<<< = 연락처 대신에 " 그룹 " 으로 해주는건 어떨지... 
 };
 
 struct DUTCH_DATA{
@@ -17,7 +41,34 @@ struct DUTCH_DATA{
 	double pay_money[100]; // 더치페이 금액을 저장할 배열
 	//string pay_money_data[100][1000000];		// 어디에서 무엇을 먹었는지 저장할 공간.... [맴버인덱스] [어디서무엇을먹었는지의데이터] 추후 넣을 기능.
 };
-//회원추가					<<< = 추가 시에 data 파일에 결제자 회원번호(인덱스 번호)와 이름, 그리고 [  __MEMBER_Su__  ]명분의 초기화된"0" 배열을 추가해줘야한다 생각함.
+
+	//////////////////////////////////////////
+	//		FTP NAS서버 접속 클라이언트		//
+	//		ftp://ARTOAnas.ipdisk.co.kr		//
+	//////////////////////////////////////////
+void artoa_nas()	// 비공개
+{
+	//nas ID
+	//nas PW
+	//nas 접속
+	//nas > HDD1 > Personal__Project > KY5__pro > 2014 > cpp > dutch_pay
+	//DUTCHPay_member.txt	copy it !
+	//DUTCHPay_data.txt		copy it !
+	//copy to > [ C:\ ]...
+}
+void artoa_nas_exit()
+{
+	//DUTCHPay_member.txt	copy it !
+	//DUTCHPay_data.txt		copy it !
+	//nas ID
+	//nas PW
+	//nas 접속
+	//nas > HDD1 > Personal__Project > KY5__pro > 2014 > cpp > dutch_pay
+	//DUTCHPay_member.txt	send it !
+	//DUTCHPay_data.txt		send it !
+}
+
+//회원추가	 
 int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수. 
 {
 	//==========================================================================	ㄱ		회원정보를 가져오기위한 init부분,
@@ -34,7 +85,7 @@ int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수.
 		u_no[no] = true;
 		ph[no].pay_id_number = no;
 		fin >> ph[no].name;
-		fin >> ph[no].m_phone;
+		fin >> ph[no].phone_num;
 		fin >> no;
 	}
 	fin.close();
@@ -77,7 +128,7 @@ int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수.
 		cout << " 이    름 : ";
 		cin >> ph[no].name;
 		cout << " 연 락 처 : ";
-		cin >> ph[no].m_phone;
+		cin >> ph[no].phone_num;
 
 
 		cout << " 저장하시겠습니까(Y/N) ? ";
@@ -96,7 +147,7 @@ int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수.
 				if(ph[i].pay_id_number < 0) continue;
 				fout << ph[i].pay_id_number << '	';
 				fout << ph[i].name <<'	';
-				fout << ph[i].m_phone <<'	'<<endl;
+				fout << ph[i].phone_num <<'	'<<endl;
 			}
 			fout.close();
 
@@ -142,7 +193,7 @@ int search_mode()	//회원 정보를 검색할 수 있는 함수
 		u_no[no] = true;
 		ph[no].pay_id_number = no;
 		fin >> ph[no].name;
-		fin >> ph[no].m_phone;
+		fin >> ph[no].phone_num;
 		fin >> no;
 	}
 	fin.close();
@@ -169,7 +220,7 @@ int search_mode()	//회원 정보를 검색할 수 있는 함수
 			cout << " ==================================== " << endl;
 			cout << "\n 회원번호 : " << ph[no].pay_id_number << endl;
 			cout << " 이    름 : " << ph[no].name << endl;
-			cout << " 휴 대 폰 : " << ph[no].m_phone << endl<< endl;
+			cout << " 휴 대 폰 : " << ph[no].phone_num << endl<< endl;
 			cout << " ==================================== " << endl;
 
 contine_A:
@@ -200,7 +251,7 @@ int change_mode()	//회원정보를 검색하여 기존의 정보를 수정하는 함수, 새로운 추가
 		u_no[no] = true;
 		ph[no].pay_id_number = no;
 		fin >> ph[no].name;
-		fin >> ph[no].m_phone;
+		fin >> ph[no].phone_num;
 		fin >> no;
 	}
 	fin.close();
@@ -227,7 +278,7 @@ int change_mode()	//회원정보를 검색하여 기존의 정보를 수정하는 함수, 새로운 추가
 
 			cout << "\n 단축번호 : " << ph[no].pay_id_number << endl;
 			cout << " 이  름 : " << ph[no].name << endl;
-			cout << " 휴대폰 : " << ph[no].m_phone << endl;
+			cout << " 휴대폰 : " << ph[no].phone_num << endl;
 			cout << "\n 계속검색1,  정보수정2,  새로추가3,  끝내기0  : ";
 			cin >> c_sw;
 			if(c_sw != 2 && c_sw != 3) continue;
@@ -249,7 +300,7 @@ int change_mode()	//회원정보를 검색하여 기존의 정보를 수정하는 함수, 새로운 추가
 				cout << " 이  름 : ";
 				cin >> ph[no].name;
 				cout << " 휴대폰 : ";
-				cin >> ph[no].m_phone;
+				cin >> ph[no].phone_num;
 				ph[no].pay_id_number = no;
 
 				u_no[no] = true;
@@ -263,79 +314,15 @@ int change_mode()	//회원정보를 검색하여 기존의 정보를 수정하는 함수, 새로운 추가
 		ph[i].pay_id_number = i;
 		fout << ph[i].pay_id_number << '	';
 		fout << ph[i].name <<'	';
-		fout << ph[i].m_phone <<'	';
+		fout << ph[i].phone_num <<'	';
 	}
 	fout.close();
 	system("cls");
 	return 0;
 }
-//main메뉴
-int main____ ()	// 메인 메뉴가 되는 main, //  최종적으로 실험시엔, main()으로 만들어줄것.
+//더치페이 모드
+int DUTCH_pay_mode()	// [   int DUTCH_pay_mode()   ]  더치페이 실질적인 기능 구현중...
 {
-	int mode_sel=0;
-
-	cout << "" <<endl;
-	while(mode_sel>=0)
-	{
-		cout << "0. 종료" <<endl;
-		cout << "1. 추가" <<endl;
-		cout << "2. 검색" <<endl;
-		cout << "3. 수정" <<endl;
-		cout << "4. 더치페이" <<endl;
-
-		if( cin>>mode_sel<=0 ) break;
-
-		switch (mode_sel)
-		{
-		case 0:
-			system("cls");
-			cout << " 정상적으로 프로그램을 종료합니다." <<endl;
-			exit(1);
-			break;
-
-		case 1:
-			system("cls");
-			cout << "add mode 입니다." <<endl;
-			add_mode();
-			break;
-
-		case 2:
-			system("cls");
-			cout << "search mode 입니다." <<endl;
-			search_mode();
-			break;
-
-		case 3:
-			system("cls");
-			cout << "change mode 입니다." <<endl;
-			change_mode();
-			break;
-
-		case 4:
-			system("cls");
-			cout << "DUTCH_pay_mode 입니다." <<endl;
-			//DUTCH_pay_mode();
-			break;
-
-		default: system("cls"); cout << " * 잘못된 선택입니다. *" <<endl;
-			break;
-		}
-	}
-	system("cls");
-	cout << "\n프로그램이 비 정상적으로 종료됩니다." << endl; 
-	cout << "\nError Log를 추출하여 서버에 전송하겠습니다." << endl; 
-	//
-	// Error log save to Send Server Code...(Add)
-	//
-	system("pause");
-	return 0;
-} 
-//------------------------------------------------------------------------------------------------------------------------------ 구분선. (페이 기능 구현시 삭제)
-
-int main()	// [   int DUTCH_pay_mode()   ]  더치페이 실질적인 기능 구현중...
-{
-	add_mode();
-
 	//==========================================================================	ㄱ		회원정보를 가져오기위한 init부분,
 	cout << "서버로부터 더치페이 회원의 정보를 가져오는 중 입니다..." <<endl;
 
@@ -350,7 +337,7 @@ int main()	// [   int DUTCH_pay_mode()   ]  더치페이 실질적인 기능 구현중...
 		u_no[no] = true;
 		ph[no].pay_id_number = no;
 		fin >> ph[no].name;
-		fin >> ph[no].m_phone;
+		fin >> ph[no].phone_num;
 		fin >> no;
 	}
 	fin.close();
@@ -447,3 +434,157 @@ int main()	// [   int DUTCH_pay_mode()   ]  더치페이 실질적인 기능 구현중...
 	system("pause");
 	return 0;
 }
+//페이정산 초기화 모드
+int DUTCH__CLS_mode(){
+
+	//==========================================================================	ㄱ		회원정보를 가져오기위한 init부분,
+	cout << "서버로부터 더치페이 기존회원의 정보를 가져오는 중 입니다..." <<endl;
+
+	int no;
+	bool u_no[100] = {false};
+
+	DUTCH ph[100];
+	ifstream fin;
+	fin.open("DUTCHPay_member.txt");
+	fin >> no;
+	while(fin){
+		u_no[no] = true;
+		ph[no].pay_id_number = no;
+		fin >> ph[no].name;
+		fin >> ph[no].phone_num;
+		fin >> no;
+	}
+	fin.close();
+
+	DUTCH_DATA ph_data[100];
+	ifstream fin_data;
+	fin_data.open("DUTCHPay_data.txt");
+	fin_data >> no;
+	while(fin_data){
+		u_no[no] = true;
+		ph[no].pay_id_number = no;
+		fin_data >> ph[no].name;
+		for(int i=0; i!=100; i++)
+			fin_data >> ph_data[no].pay_money[i];
+		fin_data >> no;
+	}
+	fin_data.close();
+	cout << "서버로부터 더치페이 기존회원의 정보를 받아왔습니다." <<endl<<endl;
+	//===============================================================================================================	ㄱ
+	ph[no].pay_id_number = no;
+
+	////////////////////////////////////////////////////// 추가로 입력한 정보를 저장.
+	ofstream fout;
+	fout.open("DUTCHPay_member.txt", ios::ios_base::app);
+	if(!fout) cout <<"* 파일 오픈에 실패하였습니다."<<endl; 
+	else
+	{
+		int i = no;
+		if(ph[i].pay_id_number < 0) return 0;//continue;
+		fout << ph[i].pay_id_number << '	';
+		fout << ph[i].name <<'	';
+		fout << ph[i].phone_num <<'	'<<endl;
+	}
+	fout.close();
+
+
+	ofstream fout_data;
+	fout_data.open("DUTCHPay_data.txt", ios::ios_base::app);
+	if(!fout_data) cout <<"* 파일 오픈에 실패하였습니다."<<endl; 
+	else
+	{
+		int i = no;
+		if(ph[i].pay_id_number < 0) return 0;//continue;
+		fout_data << ph[i].pay_id_number << '	';
+		fout_data << ph[i].name <<'	';
+		for(int ii=0; ii!=10; ii++)									//  <<  10명의 데이터라고했는데 그렇게가 아니라 100 명으로 설정할것.
+			ph_data[i].pay_money[ii]=0;
+		for(int ii=0; ii!=10; ii++)		
+			fout_data << ph_data[i].pay_money[ii]<<'	';
+		fout_data <<'	'<<endl;
+	}
+	fout_data.close();
+	cout << "저장에성공했습니다."<<endl;
+	system("pause");
+	//////////////////////////////////////////////////////
+
+
+
+	return 0;
+}
+
+//main메뉴
+int main ()	// 메인 메뉴가 되는 main, //  최종적으로 실험시엔, main()으로 만들어줄것.
+{
+	int mode_sel=0;
+
+	cout << "" <<endl;
+	while(mode_sel>=0)
+	{
+		cout << "0. 종료" <<endl;
+		cout << "1. 추가" <<endl;
+		cout << "2. 검색" <<endl;
+		cout << "3. 수정" <<endl;
+		cout << "4. 더치페이" <<endl;
+		cout << "5. 정산완료" <<endl;
+
+		if( cin>>mode_sel<=0 ) break;
+
+		switch (mode_sel)
+		{
+		case 0:
+			system("cls");
+			cout << " 정상적으로 프로그램을 종료합니다." <<endl;
+			exit(1);
+			break;
+
+		case 1:
+			system("cls");
+			cout << "add mode 입니다." <<endl;
+			add_mode();
+			break;
+
+		case 2:
+			system("cls");
+			cout << "search mode 입니다." <<endl;
+			search_mode();
+			break;
+
+		case 3:
+			system("cls");
+			cout << "change mode 입니다." <<endl;
+			change_mode();
+			break;
+
+		case 4:
+			system("cls");
+			cout << "DUTCH_pay_mode 입니다." <<endl;
+			DUTCH_pay_mode();
+			break;
+
+		case 5:
+			system("cls");
+			cout << "DUTCH__CLS_mode 입니다.\n 정산완료를 원하시면 Y혹은 y를 두번 입력하세요. " <<endl;
+			char yes;
+			cin >> yes;
+			if(yes == 'y' || yes == 'Y') cin >> yes;
+			if(yes == 'y' || yes == 'Y') DUTCH__CLS_mode();
+			system("cls");
+			break;
+
+		default: system("cls"); cout << " * 잘못된 선택입니다. *" <<endl;
+			break;
+		}
+	}
+	system("cls");
+	cout << "\n프로그램이 비 정상적으로 종료됩니다." << endl; 
+	cout << "\nError Log를 추출하여 서버에 전송하겠습니다." << endl; 
+	//
+	// Error log save to Send Server Code...(Add)
+	//
+	system("pause");
+	return 0;
+} 
+
+
+
