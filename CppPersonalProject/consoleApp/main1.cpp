@@ -94,9 +94,9 @@ int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수.
 			{
 				int i = no;
 				if(ph[i].pay_id_number < 0) continue;
-				fout << ph[i].pay_id_number << ' ';
-				fout << ph[i].name <<' ';
-				fout << ph[i].m_phone <<' '<<endl;
+				fout << ph[i].pay_id_number << '	';
+				fout << ph[i].name <<'	';
+				fout << ph[i].m_phone <<'	'<<endl;
 			}
 			fout.close();
 
@@ -108,13 +108,13 @@ int add_mode()	// 새로운 회원의 정보를 입력받아 추가로 저장 할 수 있는 함수.
 			{
 				int i = no;
 				if(ph[i].pay_id_number < 0) continue;
-				fout_data << ph[i].pay_id_number << ' ';
-				fout_data << ph[i].name <<' ';
+				fout_data << ph[i].pay_id_number << '	';
+				fout_data << ph[i].name <<'	';
 				for(int ii=0; ii!=10; ii++)									//  <<  10명의 데이터라고했는데 그렇게가 아니라 100 명으로 설정할것.
 					ph_data[i].pay_money[ii]=0;
 				for(int ii=0; ii!=10; ii++)		
-					fout_data << ph_data[i].pay_money[ii]<<' ';
-				fout_data <<' '<<endl;
+					fout_data << ph_data[i].pay_money[ii]<<'	';
+				fout_data <<'	'<<endl;
 			}
 			fout_data.close();
 			cout << "저장에성공했습니다."<<endl;
@@ -261,9 +261,9 @@ int change_mode()	//회원정보를 검색하여 기존의 정보를 수정하는 함수, 새로운 추가
 	for(int i=0; i<100; i++){
 		if(u_no[i] == false) continue;
 		ph[i].pay_id_number = i;
-		fout << ph[i].pay_id_number << ' ';
-		fout << ph[i].name <<' ';
-		fout << ph[i].m_phone <<' ';
+		fout << ph[i].pay_id_number << '	';
+		fout << ph[i].name <<'	';
+		fout << ph[i].m_phone <<'	';
 	}
 	fout.close();
 	system("cls");
@@ -334,6 +334,8 @@ int main____ ()	// 메인 메뉴가 되는 main, //  최종적으로 실험시엔, main()으로 만
 
 int main()	// [   int DUTCH_pay_mode()   ]  더치페이 실질적인 기능 구현중...
 {
+	add_mode();
+
 	//==========================================================================	ㄱ		회원정보를 가져오기위한 init부분,
 	cout << "서버로부터 더치페이 회원의 정보를 가져오는 중 입니다..." <<endl;
 
@@ -381,42 +383,64 @@ int main()	// [   int DUTCH_pay_mode()   ]  더치페이 실질적인 기능 구현중...
 	cout << "총 결제금액을 입력하세요 : " ;
 	cin >> money_all;
 
-	int member_count=1;
+
+
+	int member_count = 1;
 	int member_id[ 10 ] = {0,};					//			<<<<  10의 데이터를 100명분의 데이터로 해줄것
-	while(1){
+	for (int i =0; i!=10; i++)
+	{
 		cout << "함께한 맴버의 회원번호를 입력하세요 (종료는 -1)   : " ;
-		cin >> member_id[member_count];
-		if(member_id[member_count] > 0) member_count++;	//    <<<<     3항 연산자로 수정할것.		( member_id[i] > 0 ) ? ( member_count++구문 ) : ( break구문 ) ;
-		else break;
+		cin >> member_id[i];
+		if(member_id[i] >= 0) member_count++;	//    <<<<     3항 연산자로 수정할것.		( member_id[i] > 0 ) ? ( member_count++구문 ) : ( break구문 ) ;
+		else {member_id[i]=0; break;}
 	}
 
-	double pay_money = (double)money_all / (double)member_count ;
-	for(int i=0; i!=10; i++)									//			<<<<  10의 데이터를 100명분의 데이터로 해줄것
-		ph_data[index_id].pay_money[member_id[i]] = money_all;
 
-	cout <<"\n\n결제자는 : [" << index_id << " ]번 ID [" <<  ph[index_id].name << "] 님 입니다." <<endl;
-	cout <<"총 결제금액은 ["<< money_all << "]원 이며" <<endl;
-	cout <<"총 맴버는 ["<< member_count << "]명 으로 " <<endl;
-	cout <<"더치페이의 가격은 각각 ["<< pay_money <<"]원 이 나왔으며"<<endl;
-	cout << "["<<ph[index_id].name << "]님 에게 ["<< pay_money << "]원을 추가로 주시면 됩니다."<<endl;
+	cout << endl;
+	cout << endl;
+
+	for (int i =0; i!=10; i++)
+	{
+		cout << (member_id[i]) <<endl;
+	}
+	cout << endl;
+	cout << endl;
+
+	double pay_moneydata  = ( (double)money_all / (double)member_count ) ;
+	for(int i=0; i!=10; i++)									//			<<<<  10의 데이터를 100명분의 데이터로 해줄것
+		ph_data[index_id].pay_money[member_id[i]] = pay_moneydata ;
+
+	cout <<"\n\n 결제자는 : [" << index_id << "]번 ID [" <<  ph[index_id].name << "] 님 입니다." <<endl;
+	cout <<" 총 결제금액은 ["<< money_all << "]원 이며" <<endl;
+	cout <<" 총 맴버는 ["<< member_count << "]명 으로 " <<endl;
+	cout <<" 더치페이의 가격은 각각 ["<< pay_moneydata <<"]원 이 나왔으며"<<endl;
+	cout << "["<<ph[index_id].name << "]님 에게 ["<< pay_moneydata << "]원을 주시면 됩니다."<<endl;
+
+	for(int i=0; i!=10; i++)									//			<<<<  10의 데이터를 100명분의 데이터로 해줄것
+		cout << ph_data[index_id].pay_money[member_id[i]] <<endl; ;
 
 
 	ph[no].pay_id_number = no;
 	ofstream fout_data;
-	fout_data.open("DUTCHPay_data.txt", ios::ios_base::app);
+	fout_data.open("DUTCHPay_data.txt");	//덮어씌우기
 	if(!fout_data) cout <<"* 파일 오픈에 실패하였습니다."<<endl; 
 	else
 	{
-		int i = no;
-		if(ph[i].pay_id_number < 0) return 0;
-		fout_data << ph[i].pay_id_number << ' ';
-		fout_data << ph[i].name <<' ';
-		for(int ii=0; ii!=10; ii++)									//  <<  10명의 데이터라고했는데 그렇게가 아니라 100 명으로 설정할것.
-		{	ph_data[i].pay_money[ii]=0;
-		ph_data[index_id].pay_money[member_id[i]] = money_all;}
-		for(int ii=0; ii!=10; ii++)		
-			fout_data << ph_data[i].pay_money[ii]<<' ';
-		fout_data <<' '<<endl;
+		fout_data << "회원num	성명";
+		for(int i=0; i!=10; i++) fout_data << ph[i].name <<"	";
+		fout_data << "	" <<endl;
+		for(int i=1; i<100; i++){
+			if(ph[i].pay_id_number < 0) continue;
+			fout_data << ph[i].pay_id_number << '	';
+			fout_data << ph[i].name <<'	';
+			for(int ii=0; ii!=10; ii++)									//  <<  10명의 데이터라고했는데 그렇게가 아니라 100 명으로 설정할것.
+				/**/			ph_data[i].pay_money[ii]=0;
+			for(int i=0; i!=10; i++)									//			<<<<  10의 데이터를 100명분의 데이터로 해줄것
+				ph_data[index_id].pay_money[member_id[i]] += pay_moneydata ;
+			for(int ii=1; ii!=10; ii++)		
+				fout_data << ph_data[i].pay_money[ii]<<'	';
+			fout_data <<'	'<<endl;
+		}
 	}
 	fout_data.close();
 	cout << "저장에성공했습니다."<<endl;
